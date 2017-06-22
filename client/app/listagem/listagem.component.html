@@ -1,0 +1,65 @@
+<div class="jumbotron">
+    <h1 class="text-center">AluraPic</h1>
+</div>
+<div class="container">
+
+    <p *ngIf="mensagem.length" class="alert alert-info" >{{mensagem}}</p>
+
+    <div class="row">
+        <div class="col-md-12">
+            <form>
+                 <div class="input-group">
+                    <span class="input-group-btn">
+                        <!-- antes era assim: mas recarregava a página toda-->
+                        <!--<a href="/cadastro" class="btn btn-primary">-->
+                        <!-- agora é assim: usando diretiva do angular ('routerLink') passando uma array de rotas: 
+                            'routerLink' é somente leitura, por isso está entre colchetes
+                            'routerLink' chama o sistema de rotas passando a rota 
+                                evitando de recarregar toda a aplicação... só carrega o necessário via rotas
+                            routerLink recebe um array de rotas   -->
+                        <a [routerLink]="['/cadastro']" class="btn btn-primary">
+                            Nova foto
+                        </a>
+                    </span>
+                    <!-- '#<variavelId>' nomenclatura do angular. Mas poderia ser 'var-<variavelId> -->
+                    <!-- Evento entre parenteses é um data-binding unidirecional que vai da view para o modelo,
+                        podendo chamar código no modelo. Mas nesse caso, não queremos chamar código nenhum, queremos
+                        apenas fazer com que o Angular renderize a tela (coisa que só é feita com chamadas assíncronas ou com eventos),
+                        portanto, passamos '0' ou 'calopsita', tanto faz, que não faz nada 
+                        (apenas força a renderização da tela) -->
+                    <input #textoProcurado (keyup)="0" class="form-control" placeholder="Filtrar pelo título da foto">
+                </div> 
+            </form>
+        </div> <!-- fim col-md-12 -->
+    </div> <!-- fim row -->
+    <br>
+
+    <div class="row"> <!-- class 'row' do Bootstrap -->
+        <!-- o pipe '|' funciona como um filtro/modificador.. pega o que está à sua esquerda e aplica um regra que está à sua direita -->
+        <painel #painelElementId *ngFor="let foto of fotos | filtroPorTitulo: textoProcurado.value" titulo="{{foto.titulo | uppercase}}" class="col-md-2">
+            <a [routerLink]="['/cadastro', foto._id]" >
+                <!-- passa propriedades para os campo anotados com @Input de FotoComponent
+                    onde será feito um One-Way-Data-Binding -->
+                <foto titulo="{{foto.titulo}}" [url]="foto.url"></foto>
+            </a>
+            
+            <!-- event-binding (view para modelo) -->
+            <!--<button class="btn btn-danger btn-block" (click)="remover(foto);" >Remover</button>-->
+            
+            <!-- acao é um data-binding da view para o modelo
+                 acao é o nome de uma propriedade @Output em BotaoComponent 
+                 como é output entao podemos acessar diretamente aqui no template de listagem
+                        mesmo sem declarar um atributo desses no template de botao
+                 acao é um EventEmitter, o click do botao(ver botao.html) vai chamar uma função (em BotaoComponent) 
+                        que invocará o método emit da propriedade acao (acao.emit())
+                        e a saida será a chamada ao método passado como valor dessa propriedade, aqui no componente -->
+            <botao desabilitado="" nome="Remover" estilo="btn-danger btn-block" 
+                    tipo="button" [confirmacao]="false"
+                    (acao)="modalComponentRefId.show()" >
+            </botao>
+            <modal #modalComponentRefId frase="Tem certeza que deseja remover esta foto?" 
+                (eventEmitter)="remover(foto, painelElementId)">
+            </modal>
+        </painel>
+    </div>
+</div>

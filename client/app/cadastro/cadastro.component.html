@@ -1,0 +1,88 @@
+<div class="jumbotron">
+    <h1 class="text-center">Cadastro de Fotos</h1>  
+    <h2 class="text-center">{{foto.titulo}}</h2>
+</div>
+<div class="container">
+
+    <p *ngIf="mensagem.length" class="alert alert-info" >{{mensagem}}</p>
+
+    <!-- (submit)="cadastrar($event)
+       (submit) entre parenteses é uma diretiva do angular para enviar dados da view para o modelo: One-Way-Data-Binding  
+       - $event acessa o evento e o envia para o método no modelo
+       - no método chamamos 'event.preventDefault()' para evitar de recarregar a página 
+       - dessa forma envia o formulário via ajax e não por submit 
+
+        - 'formGroup' é uma diretiva do angular   
+    -->
+    <form [formGroup]="meuForm" class="row" (submit)="cadastrar($event)">
+        <div class="col-md-6">
+            <div class="form-group">
+                <label>Título</label>
+                <!-- diretiva do angular para 2 data-bindings unidirecionais: 2 One-Way-Data-Binding (um que vai outro que vem):
+                    (<algum-evento>): algum evento entre parenteses é uma via da view para o modelo (event binding)
+                    [algum-atributo]: algum atributo entre colchetes é uma via do modelo para a view
+                    $event é uma diretiva para acessar o evento  -->
+                <!--
+                    <input (input)="foto.titulo = $event.target.value" [value]="foto.titulo" class="form-control" autocomplete="off">    
+                -->
+
+                <!-- Mas existe uma diretiva do agular menos verbosa: ngModel :
+                     [ngModel]: One-Way-Data-Binding - do modelo para a view
+                     (ngModel): One-Way-Data-Binding - da view para o modelo
+                     [(ngModel)]: Two-Way-Data-Binding - do modelo para a view e da view para o modelo
+                     *Quando usar ngModel deve-se informar o atributo 'name' do componente
+                     ** necessário importar FormsModule em AppModule
+                -->
+                <!-- required é atributo do html5 (tiramos daqui pois a validação está sendo feita no modelo) -->
+                <input 
+                    formControlName="tituloCtrlName"
+                    name="titulo" 
+                    [(ngModel)]="foto.titulo" 
+                    class="form-control" 
+                    autocomplete="off">    
+                <div *ngIf="meuForm.controls.tituloCtrlName.invalid">
+                    <span *ngIf="meuForm.controls.tituloCtrlName.errors.required" class="form-control alert-danger">
+                        Título obrigatório
+                    </span>
+                    <span *ngIf="meuForm.controls.tituloCtrlName.errors.minlength" class="form-control alert-danger">
+                        Título dever ter no mínimo 4 caracteres
+                    </span>
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label>URL</label>
+                <!--<input (input)="foto.url = $event.target.value" [value]="foto.url" class="form-control" autocomplete="off">-->
+                <input 
+                    formControlName="urlCtrlName" 
+                    name="url" 
+                    [(ngModel)]="foto.url" 
+                    class="form-control" 
+                    autocomplete="off">
+                <span *ngIf="meuForm.controls.urlCtrlName.invalid" class="form-control alert-danger">
+                    URL obrigatório
+                </span>
+            </div>
+            <div class="form-group">
+                <label>Descrição</label>
+                <!--<textarea (input)="foto.descricao = $event.target.value" [value]="foto.descricao" class="form-control" autocomplete="off">-->
+                <textarea 
+                    formControlName="descricaoCtrlName"
+                    name="desc" 
+                    [(ngModel)]="foto.descricao" 
+                    class="form-control" 
+                    autocomplete="off">
+                </textarea>
+            </div>
+
+            <botao nome="salvar" tipo="submit" estilo="btn-primary" 
+                [desabilitado]="meuForm.invalid" >
+            </botao>
+             <a [routerLink]="['']" class="btn btn-primary">Voltar</a>
+            <hr>
+        </div>
+        <div class="col-md-6">
+            <foto [url]="foto.url" titulo="{{foto.titulo}}"></foto>
+        </div>
+    </form>
+</div>
