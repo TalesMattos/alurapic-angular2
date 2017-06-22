@@ -4,6 +4,7 @@
     $> npm start
         (inicia o transcompilador typescript em tempo real)
 
+
 - no diretorio server, do projeto;
     $> npm start
         (inicia o servidor nodejs, para servir a aplicação com seus RESTs)
